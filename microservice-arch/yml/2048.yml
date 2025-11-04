@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: game2048
-        image: 8sem/2048-game
+        image: tejubagalad/2048:latest
         ports:
         - containerPort: 80
 ---
@@ -28,4 +28,4 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-
+  

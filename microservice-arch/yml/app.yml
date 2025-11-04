@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: gamehub
-        image: 8sem/gamehub-app
+        image: tejubagalad/gamehub-app:latest
         ports:
         - containerPort: 80
 ---
@@ -28,4 +28,4 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-
+  

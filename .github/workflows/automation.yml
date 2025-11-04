@@ -1,0 +1,94 @@
+name: PlayHive CI/CD (build → push → deploy to local Minikube)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & Push Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU and Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push GameHub image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./gamehub
+          file: ./gamehub/dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gamehub:latest
+
+      - name: Build & push Snake image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./microservice-arch/gamehub-microarch/SnakeGame
+          file: ./microservice-arch/gamehub-microarch/SnakeGame/dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gamehub-snake:latest
+
+      - name: Build & push 2048 image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./microservice-arch/gamehub-microarch/TwentyFortyEight
+          file: ./microservice-arch/gamehub-microarch/TwentyFortyEight/dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gamehub-2048:latest
+
+  deploy:
+    name: Deploy to local Minikube (self-hosted)
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Ensure kubectl & docker are available
+        run: |
+          kubectl version --client
+          docker --version
+
+      - name: Ensure Minikube running (uses your local Minikube)
+        run: |
+          if ! minikube status >/dev/null 2>&1; then
+            minikube start --driver=docker
+          fi
+          minikube status
+        shell: bash
+
+      - name: Pull images to local docker
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/gamehub:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/gamehub-snake:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/gamehub-2048:latest
+
+      - name: Apply k8s manifests
+        run: |
+          kubectl apply -f microservice-arch/yml/
+          kubectl rollout status deployment/snake --timeout=60s || true
+          kubectl rollout status deployment/game2048 --timeout=60s || true
+          kubectl rollout status deployment/gamehub --timeout=60s || true
+
+      - name: Force update images (ensures latest tag used)
+        run: |
+          kubectl set image deployment/snake  snake=${{ secrets.DOCKER_USERNAME }}/gamehub-snake:latest --record || true
+          kubectl set image deployment/game2048  game2048=${{ secrets.DOCKER_USERNAME }}/gamehub-2048:latest --record || true
+          kubectl set image deployment/gamehub  gamehub=${{ secrets.DOCKER_USERNAME }}/gamehub:latest --record || true
+
+      - name: Show pods and services
+        run: |
+          kubectl get pods -o wide
+          kubectl get svc -o wide
+
