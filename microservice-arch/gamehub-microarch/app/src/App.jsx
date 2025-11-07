@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'; // Import the updated CSS file
+import './App.css';
 
 const App = () => {
   const redirectToGame = (game) => {
@@ -7,25 +7,25 @@ const App = () => {
       '2048': 'http://2048.gamehub.local',
       'snake': 'http://snake.gamehub.local'
     };
-    // Simulate a brief loading state for better UX
+
     const card = document.querySelector(`.game-card-${game}`);
     if (card) {
-      card.style.pointerEvents = 'none'; // Disable clicks during redirect
-      card.style.opacity = '0.7';
+      card.classList.add('loading');
     }
+
     setTimeout(() => {
       window.location.href = gameUrls[game];
-    }, 300); // Short delay for visual feedback
+    }, 400);
   };
 
   return (
     <div className="app-container">
       <div className="main-content">
-        <h1 className="title">Game Hub</h1>
-        <p className="subtitle">Choose your adventure</p>
-        
-        <div className="games-grid" role="grid" aria-label="Game selection grid">
-          <div 
+        <h1 className="title">🎮 GameHub</h1>
+        <p className="subtitle">Choose your next challenge</p>
+
+        <div className="games-grid">
+          <div
             className="game-card game-card-2048"
             onClick={() => redirectToGame('2048')}
             role="button"
@@ -33,14 +33,15 @@ const App = () => {
             aria-label="Play 2048 game"
             onKeyDown={(e) => e.key === 'Enter' && redirectToGame('2048')}
           >
-            <span className="game-icon" aria-hidden="true">🧩</span>
+            <div className="card-glow"></div>
+            <span className="game-icon">🧩</span>
             <h2 className="game-title">2048</h2>
             <p className="game-description">
-              Combine tiles and reach 2048 in this addictive puzzle game
+              Merge tiles and reach the magic 2048 in this addictive puzzle!
             </p>
           </div>
-          
-          <div 
+
+          <div
             className="game-card game-card-snake"
             onClick={() => redirectToGame('snake')}
             role="button"
@@ -48,10 +49,11 @@ const App = () => {
             aria-label="Play Snake game"
             onKeyDown={(e) => e.key === 'Enter' && redirectToGame('snake')}
           >
-            <span className="game-icon" aria-hidden="true">🐍</span>
+            <div className="card-glow"></div>
+            <span className="game-icon">🐍</span>
             <h2 className="game-title">Snake</h2>
             <p className="game-description">
-              Classic snake game - grow longer without hitting yourself
+              Guide your snake to grow longer — without biting yourself!
             </p>
           </div>
         </div>
@@ -61,3 +63,4 @@ const App = () => {
 };
 
 export default App;
+

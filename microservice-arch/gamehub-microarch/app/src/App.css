@@ -1,154 +1,160 @@
 :root {
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent-color: #646cff;
-  --accent-hover: #535bf2;
-  --text-primary: #213547;
-  --text-secondary: #6c757d;
-  --bg-light: #f8fafc;
-  --bg-pattern: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(120, 219, 226, 0.1) 0%, transparent 50%);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --border-radius: 16px; /* Slightly increased for a softer look */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Modern font stack */
+  --accent-color: #7f5af0;
+  --glow: #b197fc;
+  --text-primary: #ffffff;
+  --text-secondary: #d0d0d0;
+  --bg-dark: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --border-radius: 18px;
+  --transition: all 0.35s ease;
+  --font-family: 'Poppins', 'Inter', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
-
+/* ✨ GALAXY BACKGROUND ✨ */
 body {
   margin: 0;
   font-family: var(--font-family);
-  background: var(--bg-light) var(--bg-pattern);
   color: var(--text-primary);
-  line-height: 1.6;
+  overflow-x: hidden;
+  background: radial-gradient(circle at 20% 20%, #1a093a, #000814 80%);
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, #ffffff55, transparent),
+    radial-gradient(1px 1px at 70% 80%, #ffffff66, transparent),
+    radial-gradient(1px 1px at 90% 10%, #ffffff77, transparent),
+    radial-gradient(1.5px 1.5px at 50% 60%, #ffffff88, transparent),
+    linear-gradient(135deg, rgba(25, 15, 50, 0.8), rgba(10, 10, 30, 0.9));
+  background-repeat: repeat;
+  animation: galaxyMove 60s linear infinite;
+}
+
+/* 🌀 Slow movement of galaxy backdrop */
+@keyframes galaxyMove {
+  from {
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  }
+  to {
+    background-position: 5000px 2000px, -3000px -1500px, 4000px 1000px, -2500px 1500px, 0 0;
+  }
 }
 
 .app-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.main-content {
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
   text-align: center;
-  width: 100%;
+  animation: fadeIn 1s ease-out;
+  position: relative;
+  z-index: 2;
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 800;
-  background: var(--primary-gradient);
+  background: linear-gradient(90deg, #a855f7, #6366f1, #06b6d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
+  margin-bottom: 0.3rem;
   letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: var(--text-secondary);
-  margin-bottom: 3rem;
-  font-weight: 400;
+  margin-bottom: 2.5rem;
 }
 
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
+  gap: 2.2rem;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
+  padding: 0 1rem;
 }
 
 .game-card {
-  padding: 2rem;
-  background: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
   position: relative;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
   overflow: hidden;
-  text-align: center;
-  animation: fadeInUp 0.6s ease-out 0.2s both; /* Staggered animation */
+  transform-style: preserve-3d;
 }
 
-.game-card::before {
-  content: '';
+.card-glow {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
+  inset: 0;
   background: var(--primary-gradient);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+  filter: blur(25px);
+  z-index: 0;
 }
 
-.game-card:hover::before {
-  transform: scaleX(1);
+.game-card:hover .card-glow {
+  opacity: 0.4;
 }
 
 .game-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-lg);
-}
-
-.game-card:active {
-  animation: pulse 0.3s ease-in-out;
-}
-
-.game-card-2048 {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-}
-
-.game-card-snake {
-  background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 8px 30px rgba(127, 90, 240, 0.3);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .game-icon {
-  font-size: 3rem;
-  display: block;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
+  display: block;
+  transform: scale(1);
   transition: var(--transition);
 }
 
 .game-card:hover .game-icon {
-  transform: scale(1.1);
+  transform: scale(1.2) rotate(5deg);
 }
 
 .game-title {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--text-primary);
+  color: #fff;
 }
 
 .game-description {
   font-size: 1rem;
   color: var(--text-secondary);
-  margin: 0;
+}
+
+.game-card-2048 {
+  background: linear-gradient(145deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+}
+
+.game-card-snake {
+  background: linear-gradient(145deg, rgba(240, 147, 251, 0.15), rgba(245, 87, 108, 0.15));
+}
+
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+  transform: scale(0.97);
 }
 
 /* Animations */
-@keyframes fadeInUp {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -156,53 +162,16 @@ body {
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.98);
-  }
-}
-
-/* Focus states for accessibility */
-.game-card:focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 4px;
-}
-
-/* Responsive design */
+/* Responsiveness */
 @media (max-width: 768px) {
-  .app-container {
-    padding: 1rem;
-  }
-  
   .title {
     font-size: 2.5rem;
   }
-  
   .subtitle {
     font-size: 1.1rem;
   }
-  
-  .games-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
   .game-card {
     padding: 1.5rem;
   }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .game-card, .app-container, .game-icon {
-    animation: none;
-    transition: none;
-  }
-  
-  .game-card:hover {
-    transform: none;
-  }
-}
